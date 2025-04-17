@@ -78,7 +78,7 @@ export function UpdateTodoForm({ id }: UpdateTodoFormProps) {
     try {
       const updateTask = await updateTodo(jwtdata ?? "", values.task, id)
       console.log(updateTask)
-      window.location.reload()
+      router.push("/profile")
     } catch (error) {
       console.log("error:", error)
     } finally {

@@ -79,7 +79,7 @@ export default function Todolist() {
     try {
       const deleted = await deleteTodo(jwtdata ?? "", id)
       console.log(deleted)
-      router.refresh()
+      window.location.reload()
     } catch (error) {
       console.log("error:", error)
     } finally {
