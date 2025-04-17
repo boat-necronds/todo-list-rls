@@ -1,6 +1,6 @@
 "use client"
 
-import { getSession } from "@/lib/auth-client"
+import { getSession, signOut } from "@/lib/auth-client"
 import React, { useEffect, useState } from "react"
 import { neon } from "@neondatabase/serverless"
 import { drizzle } from "drizzle-orm/neon-http"
@@ -13,6 +13,11 @@ import {
   TableHeader,
   TableRow,
 } from "@workspace/ui/components/table"
+import { Button } from "@workspace/ui/components/button"
+import Link from "next/link"
+import { Loader2 } from "lucide-react"
+import { deleteTodo } from "@/features/todo/actions/delete-todo-action"
+import { useRouter } from "next/navigation"
 
 const getDb = (token: string) =>
   neon(
@@ -25,7 +30,8 @@ const getDb = (token: string) =>
 export default function Todolist() {
   const [jwtdata, setJwtdata] = useState<string | null>(null)
   const [todosData, setTodosData] = useState<Array<any> | null>(null)
-
+  const [loading, setLoading] = useState<boolean>(false)
+  const router = useRouter()
   useEffect(() => {
     async function fetchJwt() {
       try {
@@ -66,11 +72,56 @@ export default function Todolist() {
     todosData?.map((todo) => todo.task)
   )
 
-  console.log(todosData)
+  console.log(todosData?.map((todo) => todo.userId))
+
+  async function deleteTask(id: string) {
+    setLoading(true)
+    try {
+      const deleted = await deleteTodo(jwtdata ?? "", id)
+      console.log(deleted)
+      router.refresh()
+    } catch (error) {
+      console.log("error:", error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  async function handleLogout() {
+    setLoading(true)
+    try {
+      await signOut({
+        fetchOptions: {
+          onSuccess: () => {
+            router.push("/sign-in")
+          },
+        },
+      })
+    } catch (error) {
+      console.log("error:", error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <div>
       {/* {todosData?.map((todo, index) => <div key={index}>{todo.task}</div>)} */}
-      <h1 className="text-3xl font-bold">Todo List</h1>
+      <div className="flex w-full items-center justify-between">
+        <h1 className="text-3xl font-bold">Todo List</h1>
+        <div className="flex gap-4">
+          <Link href="/profile/create">
+            <Button>Create Task</Button>
+          </Link>
+          <Button onClick={handleLogout} variant="ghost">
+            {loading ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              "Sign Out"
+            )}
+          </Button>
+        </div>
+      </div>
       <Table>
         <TableHeader>
           <TableRow>
@@ -79,22 +130,46 @@ export default function Todolist() {
             <TableHead>Task Name</TableHead>
             <TableHead>Date</TableHead>
             <TableHead>Complete</TableHead>
+            <TableHead>Action</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {todosData?.map((todo: any) => (
-            <TableRow key={todo.id.toString()}>
-              <TableCell>{todo.id}</TableCell>
-              <TableCell>{todo.userId}</TableCell>
-              <TableCell>{todo.task}</TableCell>
-              <TableCell>
-                {new Date(todo.insertedAt).toLocaleString()}
-              </TableCell>
-              <TableCell>
-                {todo.isComplete ? "✅ Done" : "⏳ Pending"}
+          {todosData && todosData.length > 0 ? (
+            todosData.map((todo: any) => (
+              <TableRow key={todo.id.toString()}>
+                <TableCell>{todo.id}</TableCell>
+                <TableCell>{todo.userId}</TableCell>
+                <TableCell>{todo.task} </TableCell>
+                <TableCell>
+                  {new Date(todo.insertedAt).toLocaleString()}
+                </TableCell>
+                <TableCell>
+                  {todo.isComplete ? "✅ Done" : "⏳ Pending"}
+                </TableCell>
+                <TableCell className="flex gap-4">
+                  <Link href={`/profile/update/${todo.id}`}>
+                    <Button>Edit</Button>
+                  </Link>
+                  <Button
+                    onClick={() => deleteTask(todo.id)}
+                    variant="destructive"
+                  >
+                    {loading ? (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    ) : (
+                      "Delete"
+                    )}
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={7} className="text-center py-4">
+                No task ...
               </TableCell>
             </TableRow>
-          ))}
+          )}
         </TableBody>
       </Table>
     </div>

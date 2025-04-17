@@ -52,7 +52,7 @@ export const users = pgTable(
 export const todos = pgTable(
   "todos",
   {
-    id: bigint({ mode: "number" }).primaryKey(),
+    id: uuid().primaryKey().defaultRandom(),
     userId: text()
       .notNull()
       .default(sql`(auth.user_id())`),

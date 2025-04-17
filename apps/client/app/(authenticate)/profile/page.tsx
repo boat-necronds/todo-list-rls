@@ -10,6 +10,7 @@ import {
   CardTitle,
 } from "@workspace/ui/components/card"
 import { Button } from "@workspace/ui/components/button"
+import { signOut } from "@/lib/auth-client"
 
 export default async function ProfilePage() {
   const session = await auth.api.getSession({
@@ -21,6 +22,7 @@ export default async function ProfilePage() {
   }
   console.log(session)
 
+ 
   return (
     <div className="min-h-[100vh] flex justify-center items-center flex-col bg-black text-white space-y-10">
       <Card>
@@ -46,6 +48,7 @@ export default async function ProfilePage() {
           </div>
         </CardContent>
       </Card>
+
       <Todolist />
     </div>
   )
