@@ -63,10 +63,14 @@ export function SignUpForm() {
         name: values.name,
       })
 
-      const updateroleResult = await updateRole(
-        values.role,
-        signupResult.data?.user.id ?? ""
-      )
+      const updateroleResult = await fetch("/api/update-role", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: signupResult.data?.user.id,
+          role: values.role,
+        }),
+      })
 
       console.log("updateroleResult", updateroleResult)
       router.push("/profile")
