@@ -1,24 +1,20 @@
-"use server"
+"use server";
 
-import { FormState, userSignInInputSchema } from "@/features/auth/schema"
-import { cookies } from "next/headers"
-import { redirect } from "next/navigation"
-import "server-only"
-import { userSignUpInputSchema } from "./schema"
-import { createUser, loginUser } from "@repo/database/user"
-import { changeUserRole } from "@/prisma/src/user"
+import { changeUserRole } from "@/prisma/src/user";
+import { redirect } from "next/navigation";
+import "server-only";
 
 export async function updateRole(role: string, userId: string) {
   try {
-    console.log("user id in action : ", userId)
-    const user = await changeUserRole(role, userId)
+    console.log("user id in action : ", userId);
+    const user = await changeUserRole(role, userId);
 
-    console.log("user change role", user)
-    return user
+    console.log("user change role", user);
+    return user;
   } catch (err) {
-    console.error("Error updating user role:", err)
+    console.error("Error updating user role:", err);
   }
-  redirect("/profile")
+  redirect("/profile");
 }
 
 /* export async function signupAction(
