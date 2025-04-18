@@ -22,7 +22,7 @@ import { todoInput } from "@/features/todo/schema"
 
 export default function Todolist() {
   const [jwtdata, setJwtdata] = useState<string | null>(null);
-  const [todosData, setTodosData] = useState<Todo[] | null>(null);
+  const [todosData, setTodosData] = useState<Array<todoInput> | null>(null)
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
 
@@ -58,7 +58,7 @@ export default function Todolist() {
           'auth-jwt': jwtdata,
         },
       });
-      const todosList = (await response.json()) as Todo[];
+      const todosList = (await response.json()) as Array<todoInput>;
       setTodosData(todosList);
     }
 
