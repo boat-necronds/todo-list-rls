@@ -1,24 +1,13 @@
-"use server"
+'use server';
 
-import { redirect } from "next/navigation"
-import "server-only"
-import { neon } from "@neondatabase/serverless"
-import { drizzle } from "drizzle-orm/neon-http"
-import { todos } from "../../../app/(authenticate)/profile/components/schema"
-import { eq } from "drizzle-orm"
-
-const getDb = (token: string) =>
-  neon(
-    "postgresql://authenticated@ep-little-waterfall-a4kayg2c.us-east-1.aws.neon.tech/authdb?sslmode=require",
-    {
-      authToken: token,
-    }
-  )
+import 'server-only';
+import { redirect } from 'next/navigation';
+import { todos } from '../../../app/(authenticate)/profile/components/schema';
+import { eq } from 'drizzle-orm';
+import { getSql } from '@/lib/db';
 
 export async function updateTodo(jwt: string, task: string, id: string) {
-  const sql = drizzle(getDb(jwt), {
-    logger: true,
-  })
+  const sql = getSql(jwt);
 
   try {
     const updated = await sql
@@ -28,12 +17,12 @@ export async function updateTodo(jwt: string, task: string, id: string) {
         isComplete: true,
       })
       .where(eq(todos.id, id))
-      .returning()
-    console.log("✅ Updated todo:", updated)
+      .returning();
+    console.log('✅ Updated todo:', updated);
 
-    return updated
+    return updated;
   } catch (err) {
-    console.error("Error updating user role:", err)
+    console.error('Error updating user role:', err);
   }
-  redirect("/profile")
+  redirect('/profile');
 }
