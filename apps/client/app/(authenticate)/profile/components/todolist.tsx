@@ -20,19 +20,12 @@ import { useRouter } from "next/navigation"
 import { deleteTodo } from "@/features/todo/actions/todo-action"
 import { todoInput } from "@/features/todo/schema"
 
-const getDb = (token: string) =>
-  neon(
-    "postgresql://authenticated@ep-little-waterfall-a4kayg2c.us-east-1.aws.neon.tech/authdb?sslmode=require",
-    {
-      authToken: token,
-    }
-  )
-
 export default function Todolist() {
-  const [jwtdata, setJwtdata] = useState<string | null>(null)
-  const [todosData, setTodosData] = useState<Array<todoInput> | null>(null)
-  const [loading, setLoading] = useState<boolean>(false)
-  const router = useRouter()
+  const [jwtdata, setJwtdata] = useState<string | null>(null);
+  const [todosData, setTodosData] = useState<Todo[] | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const router = useRouter();
+
 
   useEffect(() => {
     async function fetchJwt() {
@@ -57,18 +50,22 @@ export default function Todolist() {
   useEffect(() => {
     if (!jwtdata) return
 
-    const sql = drizzle(getDb(jwtdata), {
-      logger: true,
-    })
 
     async function fetchTodos() {
-      const todosList = await sql.select().from(todos)
-      console.log("todos:", todosList)
-      setTodosData(todosList)
+      if (!jwtdata) return;
+      const response = await fetch('/api/todos', {
+        headers: {
+          'auth-jwt': jwtdata,
+        },
+      });
+      const todosList = (await response.json()) as Todo[];
+      setTodosData(todosList);
     }
 
-    fetchTodos()
-  }, [jwtdata])
+    fetchTodos();
+  }, [jwtdata]);
+
+
   console.log(
     "todosData task :",
     todosData?.map((todo) => todo.task)
@@ -108,7 +105,6 @@ export default function Todolist() {
 
   return (
     <div>
-      {/* {todosData?.map((todo, index) => <div key={index}>{todo.task}</div>)} */}
       <div className="flex w-full items-center justify-between">
         <h1 className="text-3xl font-bold">Todo List</h1>
         <div className="flex gap-4">
