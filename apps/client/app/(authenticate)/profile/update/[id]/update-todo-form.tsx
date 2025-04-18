@@ -108,7 +108,7 @@ export function UpdateTodoForm({ id }: UpdateTodoFormProps) {
           <CardContent>
             {fetchLoading ? (
               <div className="flex flex-col justify-center space-y-3">
-                <Label>Text</Label>
+                <Label>Task</Label>
                 <Skeleton className="h-8 w-full" />
               </div>
             ) : (
