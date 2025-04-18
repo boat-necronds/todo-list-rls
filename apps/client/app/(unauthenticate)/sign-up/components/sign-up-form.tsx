@@ -57,15 +57,18 @@ export function SignUpForm() {
   async function onSubmit(values: UserInputSignInForm) {
     setLoading(true)
     try {
-      console.log("values:",values)
-       /* const signupResult = await signUp.email({
+      const signupResult = await signUp.email({
         email: values.email,
         password: values.password,
         name: values.name,
-      });
+      })
 
-      await updateRole(values.role, signupResult.data?.user.id ?? ""); */
+      const updateroleResult = await updateRole(
+        values.role,
+        signupResult.data?.user.id ?? ""
+      )
 
+      console.log("updateroleResult", updateroleResult)
       router.push("/profile")
     } catch (error) {
       console.log("error:", error)
