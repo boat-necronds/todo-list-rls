@@ -2,10 +2,9 @@
 
 import { db } from "./client"
 
-export async function changeUserRole( role: string,userId: string,) {
+export async function changeUserRole(role: string, userId: string) {
   try {
-
-     const user = await db.user.findUnique({
+    const user = await db.user.findUnique({
       where: { id: userId },
     })
 

@@ -1,8 +1,8 @@
-"use client";
+"use client"
 
-import { useRef, useState } from "react";
-import { useForm } from "react-hook-form";
-import { Button } from "@workspace/ui/components/button";
+import { useRef, useState } from "react"
+import { useForm } from "react-hook-form"
+import { Button } from "@workspace/ui/components/button"
 import {
   Card,
   CardContent,
@@ -10,14 +10,14 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@workspace/ui/components/card";
-import { InputPassword } from "@workspace/ui/components/input-password";
-import { Input } from "@workspace/ui/components/input";
+} from "@workspace/ui/components/card"
+import { InputPassword } from "@workspace/ui/components/input-password"
+import { Input } from "@workspace/ui/components/input"
 import {
   UserInputSignInForm,
   userSignInInputSchema,
-} from "@/features/auth/schema";
-import { zodResolver } from "@hookform/resolvers/zod";
+} from "@/features/auth/schema"
+import { zodResolver } from "@hookform/resolvers/zod"
 import {
   Form,
   FormControl,
@@ -25,24 +25,24 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@workspace/ui/components/form";
-import Link from "next/link";
-import { Loader2 } from "lucide-react";
-import { signUp } from "@/lib/auth-client";
-import { useRouter } from "next/navigation";
-import { updateRole } from "@/features/auth/action";
+} from "@workspace/ui/components/form"
+import Link from "next/link"
+import { Loader2 } from "lucide-react"
+import { signUp } from "@/lib/auth-client"
+import { useRouter } from "next/navigation"
+import { updateRole } from "@/features/auth/action"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@workspace/ui/components/select";
+} from "@workspace/ui/components/select"
 
 export function SignUpForm() {
-  const [loading, setLoading] = useState<boolean>(false);
-  const formRef = useRef<HTMLFormElement>(null);
-  const router = useRouter();
+  const [loading, setLoading] = useState<boolean>(false)
+  const formRef = useRef<HTMLFormElement>(null)
+  const router = useRouter()
 
   const form = useForm<UserInputSignInForm>({
     resolver: zodResolver(userSignInInputSchema),
@@ -52,24 +52,25 @@ export function SignUpForm() {
       name: "",
       role: "user",
     },
-  });
+  })
 
   async function onSubmit(values: UserInputSignInForm) {
-    setLoading(true);
+    setLoading(true)
     try {
-      const signupResult = await signUp.email({
+      console.log("values:",values)
+       /* const signupResult = await signUp.email({
         email: values.email,
         password: values.password,
         name: values.name,
       });
 
-      await updateRole(values.role, signupResult.data?.user.id ?? "");
+      await updateRole(values.role, signupResult.data?.user.id ?? ""); */
 
-      router.push("/profile");
+      router.push("/profile")
     } catch (error) {
-      console.log("error:", error);
+      console.log("error:", error)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
   }
 
@@ -205,5 +206,5 @@ export function SignUpForm() {
         </form>
       </Form>
     </Card>
-  );
+  )
 }
