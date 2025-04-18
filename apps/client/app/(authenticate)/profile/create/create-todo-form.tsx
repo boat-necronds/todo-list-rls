@@ -1,8 +1,8 @@
-"use client"
+'use client';
 
-import { useEffect, useRef, useState } from "react"
-import { useForm } from "react-hook-form"
-import { Button } from "@workspace/ui/components/button"
+import { useEffect, useRef, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { Button } from '@workspace/ui/components/button';
 import {
   Card,
   CardContent,
@@ -10,16 +10,9 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@workspace/ui/components/card"
-import { InputPassword } from "@workspace/ui/components/input-password"
-import { Input } from "@workspace/ui/components/input"
-import {
-  signInInput,
-  signInSchema,
-  UserInputSignInForm,
-  userSignInInputSchema,
-} from "@/features/auth/schema"
-import { zodResolver } from "@hookform/resolvers/zod"
+} from '@workspace/ui/components/card';
+import { Input } from '@workspace/ui/components/input';
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Form,
   FormControl,
@@ -27,22 +20,20 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@workspace/ui/components/form"
-import Link from "next/link"
-import { Loader2 } from "lucide-react"
-import { getSession, signIn, signUp } from "@/lib/auth-client"
-import { useRouter } from "next/navigation"
+} from '@workspace/ui/components/form';
+import Link from 'next/link';
+import { Loader2 } from 'lucide-react';
+import { getSession } from '@/lib/auth-client';
+import { useRouter } from 'next/navigation';
 
-import { todoInput, todoSchema } from "@/features/todo/schema"
-import {
-  createTodo,
-} from "@/features/todo/actions/create-todo-action"
+import { todoInput, todoSchema } from '@/features/todo/schema';
+import { createTodo } from '@/features/todo/actions/todo-action';
 
 export function CreateTodoForm() {
-  const [loading, setLoading] = useState<boolean>(false)
-  const formRef = useRef<HTMLFormElement>(null)
-  const router = useRouter()
-  const [jwtdata, setJwtdata] = useState<string | null>(null)
+  const [loading, setLoading] = useState<boolean>(false);
+  const formRef = useRef<HTMLFormElement>(null);
+  const router = useRouter();
+  const [jwtdata, setJwtdata] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchJwt() {
@@ -50,37 +41,37 @@ export function CreateTodoForm() {
         await getSession({
           fetchOptions: {
             onSuccess: (ctx) => {
-              const jwt = ctx.response.headers.get("set-auth-jwt")
-              console.log("jwt:", jwt)
-              setJwtdata(jwt)
+              const jwt = ctx.response.headers.get('set-auth-jwt');
+              console.log('jwt:', jwt);
+              setJwtdata(jwt);
             },
           },
-        })
+        });
       } catch (error) {
-        console.log("error:", error)
+        console.log('error:', error);
       }
     }
 
-    fetchJwt()
-  }, [])
+    fetchJwt();
+  }, []);
 
   const form = useForm<todoInput>({
     resolver: zodResolver(todoSchema),
     defaultValues: {
-      task: "",
+      task: '',
     },
-  })
+  });
 
   async function onSubmit(values: todoInput) {
-    setLoading(true)
+    setLoading(true);
     try {
-      const createTask = await createTodo(jwtdata ?? "", values.task)
-      console.log(createTask)
-      router.push("/profile")
+      const createTask = await createTodo(jwtdata ?? '', values.task);
+      console.log(createTask);
+      router.push('/profile');
     } catch (error) {
-      console.log("error:", error)
+      console.log('error:', error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
@@ -136,12 +127,12 @@ export function CreateTodoForm() {
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 </>
               ) : (
-                "Create Task"
+                'Create Task'
               )}
             </Button>
           </CardFooter>
         </form>
       </Form>
     </Card>
-  )
+  );
 }
