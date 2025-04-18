@@ -16,8 +16,8 @@ import {
 import { Button } from '@workspace/ui/components/button';
 import Link from 'next/link';
 import { Loader2 } from 'lucide-react';
-import { deleteTodo } from '@/features/todo/actions/delete-todo-action';
 import { useRouter } from 'next/navigation';
+import { deleteTodo } from '@/features/todo/actions/todo-action';
 
 const getDb = (token: string) =>
   neon(

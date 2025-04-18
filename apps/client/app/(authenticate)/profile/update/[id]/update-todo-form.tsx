@@ -28,9 +28,8 @@ import { getSession } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
 
 import { todoInput, todoSchema } from '@/features/todo/schema';
-import { updateTodo } from '@/features/todo/actions/update-todo-action';
-import { fetchTodo } from '@/features/todo/actions/select-todo-action';
 import { Label } from '@workspace/ui/components/label';
+import { fetchTodo, updateTodo } from '@/features/todo/actions/todo-action';
 
 interface UpdateTodoFormProps {
   id: string;
