@@ -2,9 +2,6 @@
 
 import { getSession, signOut } from '@/lib/auth-client';
 import React, { useEffect, useState } from 'react';
-import { neon } from '@neondatabase/serverless';
-import { drizzle } from 'drizzle-orm/neon-http';
-import { todos } from './schema';
 import {
   Table,
   TableBody,
@@ -19,17 +16,17 @@ import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { deleteTodo } from '@/features/todo/actions/todo-action';
 
-const getDb = (token: string) =>
-  neon(
-    'postgresql://authenticated@ep-little-waterfall-a4kayg2c.us-east-1.aws.neon.tech/authdb?sslmode=require',
-    {
-      authToken: token,
-    }
-  );
+export interface Todo {
+  id: string;
+  userId: string;
+  task: string;
+  insertedAt: string;
+  isComplete: boolean;
+}
 
 export default function Todolist() {
   const [jwtdata, setJwtdata] = useState<string | null>(null);
-  const [todosData, setTodosData] = useState<Array<any> | null>(null);
+  const [todosData, setTodosData] = useState<Todo[] | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
 
@@ -56,18 +53,20 @@ export default function Todolist() {
   useEffect(() => {
     if (!jwtdata) return;
 
-    const sql = drizzle(getDb(jwtdata), {
-      logger: true,
-    });
-
     async function fetchTodos() {
-      const todosList = await sql.select().from(todos);
-      console.log('todos:', todosList);
+      if (!jwtdata) return;
+      const response = await fetch('/api/todos', {
+        headers: {
+          'auth-jwt': jwtdata,
+        },
+      });
+      const todosList = (await response.json()) as Todo[];
       setTodosData(todosList);
     }
 
     fetchTodos();
   }, [jwtdata]);
+
   console.log(
     'todosData task :',
     todosData?.map((todo) => todo.task)
@@ -107,7 +106,6 @@ export default function Todolist() {
 
   return (
     <div>
-      {/* {todosData?.map((todo, index) => <div key={index}>{todo.task}</div>)} */}
       <div className="flex w-full items-center justify-between">
         <h1 className="text-3xl font-bold">Todo List</h1>
         <div className="flex gap-4">
@@ -136,7 +134,7 @@ export default function Todolist() {
         </TableHeader>
         <TableBody>
           {todosData && todosData.length > 0 ? (
-            todosData.map((todo: any) => (
+            todosData.map((todo: Todo) => (
               <TableRow key={todo.id.toString()}>
                 <TableCell>{todo.id}</TableCell>
                 <TableCell>{todo.userId}</TableCell>
