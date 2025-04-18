@@ -7,6 +7,9 @@ import {
   CardHeader,
   CardTitle,
 } from '@workspace/ui/components/card';
+import { Separator } from '@workspace/ui/components/separator';
+import PostsList from './components/post-list';
+import SignOut from './components/sign-out';
 
 export default async function ProfilePage() {
   const session = await auth.api.getSession({
@@ -41,10 +44,15 @@ export default async function ProfilePage() {
             <div>Role : </div>
             <div>{session?.user.role}</div>
           </div>
+          <SignOut />
         </CardContent>
       </Card>
 
-      <Todolist />
+      <div className="flex flex-col w-full px-4 md:px-[10%] space-y-16">
+        <Todolist />
+        <Separator className="my-4" />
+        <PostsList />
+      </div>
     </div>
   );
 }
