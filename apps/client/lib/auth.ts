@@ -11,7 +11,7 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
-  secret: process.env.BETTER_AUTH_SECRET,
+  secret: 'iLEDrVZfXGXLv2Ilt2xwlpyPQ6Mk1am1',
   plugins: [
     jwt({
       jwks: {
