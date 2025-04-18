@@ -24,7 +24,7 @@ export function middleware(request: NextRequest) {
   }
 
   // ตรวจสอบ session token
-  const sessionToken = request.cookies.get("better-auth.session_token");
+  const sessionToken = request.cookies.get("better-auth.session_token")?.value || request.cookies.get("__Secure-better-auth.session_tok")?.value;
 
   // ถ้าไม่มี session token และไม่ใช่ public route ให้ redirect ไปที่หน้า sign-in
   if (!sessionToken && !isPublicRoute(path)) {
