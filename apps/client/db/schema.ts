@@ -1,5 +1,5 @@
-import { sql } from "drizzle-orm"
-import { crudPolicy } from "./drizzle-orm-neon"
+import { sql } from 'drizzle-orm';
+import { crudPolicy } from './drizzle-orm-neon';
 import {
   pgTable,
   text,
@@ -8,12 +8,12 @@ import {
   uuid,
   bigint,
   boolean,
-} from "drizzle-orm/pg-core"
-import { authenticatedRole } from "drizzle-orm/neon"
+} from 'drizzle-orm/pg-core';
+import { authenticatedRole } from 'drizzle-orm/neon';
 
 // This is a multi-tenant app.
 export const tenants = pgTable(
-  "tenants",
+  'tenants',
   {
     id: uuid().primaryKey(),
     name: text(),
@@ -25,10 +25,10 @@ export const tenants = pgTable(
       modify: sql`(select auth.session()->>'tenant_id' = ${table.id}::text)`,
     }),
   ]
-)
+);
 
 export const users = pgTable(
-  "users",
+  'users',
   {
     tenantId: uuid()
       .notNull()
@@ -47,10 +47,10 @@ export const users = pgTable(
       modify: sql`(select auth.user_id() = ${table.id}::text)`,
     }),
   ]
-)
+);
 
 export const todos = pgTable(
-  "todos",
+  'todos',
   {
     id: uuid().primaryKey().defaultRandom(),
     userId: text()
@@ -67,4 +67,23 @@ export const todos = pgTable(
       modify: sql`(select auth.user_id() = ${table.userId}::text)`,
     }),
   ]
-)
+);
+
+export const posts = pgTable(
+  'posts',
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    userId: text()
+      .notNull()
+      .default(sql`(auth.user_id())`),
+    post: text().notNull(),
+    insertedAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    crudPolicy({
+      role: authenticatedRole,
+      read: sql`(select auth.user_id() = ${table.userId}::text)`,
+      modify: sql`(select auth.user_id() = ${table.userId}::text)`,
+    }),
+  ]
+);

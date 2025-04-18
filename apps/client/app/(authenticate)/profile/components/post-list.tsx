@@ -13,12 +13,12 @@ import {
 import { Button } from '@workspace/ui/components/button';
 import Link from 'next/link';
 import { Loader2 } from 'lucide-react';
-import { deleteTodo } from '@/features/todo/actions/todo-action';
-import { todoInput } from '@/features/todo/schema';
+import { postsInput } from '@/features/post/schema';
+import { deletePost } from '@/features/post/actions/post-action';
 
-export default function Todolist() {
+export default function PostsList() {
   const [jwtdata, setJwtdata] = useState<string | null>(null);
-  const [todosData, setTodosData] = useState<Array<todoInput> | null>(null);
+  const [postsData, setPostsData] = useState<Array<postsInput> | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
@@ -44,31 +44,31 @@ export default function Todolist() {
   useEffect(() => {
     if (!jwtdata) return;
 
-    async function fetchTodos() {
+    async function fetchPosts() {
       if (!jwtdata) return;
-      const response = await fetch('/api/todos', {
+      const response = await fetch('/api/posts', {
         headers: {
           'auth-jwt': jwtdata,
         },
       });
-      const todosList = (await response.json()) as Array<todoInput>;
-      setTodosData(todosList);
+      const postsList = (await response.json()) as Array<postsInput>;
+      setPostsData(postsList);
     }
 
-    fetchTodos();
+    fetchPosts();
   }, [jwtdata]);
 
   console.log(
-    'todosData task :',
-    todosData?.map((todo) => todo.task)
+    'postsData title:',
+    postsData?.map((post) => post.post)
   );
 
-  console.log(todosData?.map((todo) => todo.userId));
+  console.log(postsData?.map((post) => post.userId));
 
-  async function deleteTask(id: string) {
+  async function deletePostItem(id: string) {
     setLoading(true);
     try {
-      const deleted = await deleteTodo(jwtdata ?? '', id);
+      const deleted = await deletePost(jwtdata ?? '', id);
       console.log(deleted);
       window.location.reload();
     } catch (error) {
@@ -81,43 +81,39 @@ export default function Todolist() {
   return (
     <div>
       <div className="flex w-full items-center justify-between">
-        <h1 className="text-3xl font-bold">Todo List</h1>
+        <h1 className="text-3xl font-bold">Posts List</h1>
         <div className="flex gap-4">
-          <Link href="/profile/create">
-            <Button>Create Task</Button>
+          <Link href="/profile/create-post">
+            <Button>Create Post</Button>
           </Link>
         </div>
       </div>
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Task ID</TableHead>
+            <TableHead>Post ID</TableHead>
             <TableHead>User ID</TableHead>
-            <TableHead>Task Name</TableHead>
+            <TableHead>Post</TableHead>
             <TableHead>Date</TableHead>
-            <TableHead>Complete</TableHead>
             <TableHead>Action</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {todosData && todosData.length > 0 ? (
-            todosData.map((todo) => (
-              <TableRow key={todo.id.toString()}>
-                <TableCell>{todo.id}</TableCell>
-                <TableCell>{todo.userId}</TableCell>
-                <TableCell>{todo.task} </TableCell>
+          {postsData && postsData.length > 0 ? (
+            postsData.map((post) => (
+              <TableRow key={post.id.toString()}>
+                <TableCell>{post.id}</TableCell>
+                <TableCell>{post.userId}</TableCell>
+                <TableCell>{post.post}</TableCell>
                 <TableCell>
-                  {new Date(todo.insertedAt).toLocaleString()}
-                </TableCell>
-                <TableCell>
-                  {todo.isComplete ? '✅ Done' : '⏳ Pending'}
+                  {new Date(post.insertedAt).toLocaleString()}
                 </TableCell>
                 <TableCell className="flex gap-4">
-                  <Link href={`/profile/update/${todo.id}`}>
+                  <Link href={`/profile/update-post/${post.id}`}>
                     <Button>Edit</Button>
                   </Link>
                   <Button
-                    onClick={() => deleteTask(todo.id)}
+                    onClick={() => deletePostItem(post.id)}
                     variant="destructive"
                   >
                     {loading ? (
@@ -131,8 +127,8 @@ export default function Todolist() {
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={7} className="text-center py-4">
-                No task ...
+              <TableCell colSpan={6} className="text-center py-4">
+                No posts ...
               </TableCell>
             </TableRow>
           )}

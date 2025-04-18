@@ -25,11 +25,10 @@ import Link from 'next/link';
 import { Loader2 } from 'lucide-react';
 import { getSession } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
+import { postFormInput, postFormInputSchema } from '@/features/post/schema';
+import { createPost } from '@/features/post/actions/post-action';
 
-import { todoTaskInput, todoTaskInputSchema } from '@/features/todo/schema';
-import { createTodo } from '@/features/todo/actions/todo-action';
-
-export function CreateTodoForm() {
+export function CreatePostForm() {
   const [loading, setLoading] = useState<boolean>(false);
   const formRef = useRef<HTMLFormElement>(null);
   const router = useRouter();
@@ -55,18 +54,18 @@ export function CreateTodoForm() {
     fetchJwt();
   }, []);
 
-  const form = useForm<todoTaskInput>({
-    resolver: zodResolver(todoTaskInputSchema),
+  const form = useForm<postFormInput>({
+    resolver: zodResolver(postFormInputSchema),
     defaultValues: {
-      task: '',
+      post: '',
     },
   });
 
-  async function onSubmit(values: todoTaskInput) {
+  async function onSubmit(values: postFormInput) {
     setLoading(true);
     try {
-      const createTask = await createTodo(jwtdata ?? '', values.task);
-      console.log(createTask);
+      const createPostResult = await createPost(jwtdata ?? '', values.post);
+      console.log(createPostResult);
       router.push('/profile');
     } catch (error) {
       console.log('error:', error);
@@ -84,9 +83,9 @@ export function CreateTodoForm() {
           className="space-y-4"
         >
           <CardHeader>
-            <CardTitle>Create Task</CardTitle>
+            <CardTitle>Create Post</CardTitle>
             <CardDescription>
-              Deploy your new project in one-click.
+              Share your new post with the community.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -94,23 +93,18 @@ export function CreateTodoForm() {
               <div className="flex flex-col space-y-1.5">
                 <FormField
                   control={form.control}
-                  name="task"
+                  name="post"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Task</FormLabel>
+                      <FormLabel>Post</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="Task"
-                          aria-label="task"
+                          placeholder="Post Title"
+                          aria-label="title"
                           {...field}
                         />
                       </FormControl>
                       <FormMessage />
-                      {form.formState.errors.root && (
-                        <p className="text-red-500 text-sm">
-                          {form.formState.errors.root.message}
-                        </p>
-                      )}
                     </FormItem>
                   )}
                 />
@@ -125,9 +119,10 @@ export function CreateTodoForm() {
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Creating Post...
                 </>
               ) : (
-                'Create Task'
+                'Create Post'
               )}
             </Button>
           </CardFooter>
