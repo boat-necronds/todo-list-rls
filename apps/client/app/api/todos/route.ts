@@ -1,5 +1,5 @@
 import { getSql } from '@/lib/db';
-import { todos } from '@/app/(authenticate)/profile/components/schema';
+import { todos } from '@/db/schema';
 
 export async function GET(request: Request) {
   const jwt = request.headers.get('auth-jwt');

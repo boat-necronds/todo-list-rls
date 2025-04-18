@@ -4,7 +4,7 @@ import { getSession, signOut } from "@/lib/auth-client"
 import React, { useEffect, useState } from "react"
 import { neon } from "@neondatabase/serverless"
 import { drizzle } from "drizzle-orm/neon-http"
-import { todos } from "./schema"
+import { todos } from "@/db/schema"
 import {
   Table,
   TableBody,

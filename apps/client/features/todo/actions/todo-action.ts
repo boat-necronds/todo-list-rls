@@ -2,7 +2,7 @@
 
 import 'server-only';
 import { redirect } from 'next/navigation';
-import { todos } from '../../../app/(authenticate)/profile/components/schema';
+import { todos } from '@/db/schema';
 import { getSql } from '@/lib/db';
 import { eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
