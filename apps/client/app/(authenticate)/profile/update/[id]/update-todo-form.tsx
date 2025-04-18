@@ -1,8 +1,8 @@
-'use client';
+"use client"
 
-import { useEffect, useRef, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { Button } from '@workspace/ui/components/button';
+import { useEffect, useRef, useState } from "react"
+import { useForm } from "react-hook-form"
+import { Button } from "@workspace/ui/components/button"
 import {
   Card,
   CardContent,
@@ -10,10 +10,10 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@workspace/ui/components/card';
-import { Skeleton } from '@workspace/ui/components/skeleton';
-import { Input } from '@workspace/ui/components/input';
-import { zodResolver } from '@hookform/resolvers/zod';
+} from "@workspace/ui/components/card"
+import { Skeleton } from "@workspace/ui/components/skeleton"
+import { Input } from "@workspace/ui/components/input"
+import { zodResolver } from "@hookform/resolvers/zod"
 import {
   Form,
   FormControl,
@@ -21,33 +21,38 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@workspace/ui/components/form';
-import Link from 'next/link';
-import { Loader2 } from 'lucide-react';
-import { getSession } from '@/lib/auth-client';
-import { useRouter } from 'next/navigation';
+} from "@workspace/ui/components/form"
+import Link from "next/link"
+import { Loader2 } from "lucide-react"
+import { getSession } from "@/lib/auth-client"
+import { useRouter } from "next/navigation"
 
-import { todoInput, todoSchema } from '@/features/todo/schema';
-import { Label } from '@workspace/ui/components/label';
-import { fetchTodo, updateTodo } from '@/features/todo/actions/todo-action';
+import {
+  todoInput,
+  todoSchema,
+  todoTaskInput,
+  todoTaskInputSchema,
+} from "@/features/todo/schema"
+import { Label } from "@workspace/ui/components/label"
+import { fetchTodo, updateTodo } from "@/features/todo/actions/todo-action"
 
 interface UpdateTodoFormProps {
-  id: string;
+  id: string
 }
 
 export function UpdateTodoForm({ id }: UpdateTodoFormProps) {
-  const [loading, setLoading] = useState<boolean>(false);
-  const [fetchLoading, setFetchLoading] = useState<boolean>(true);
-  const formRef = useRef<HTMLFormElement>(null);
-  const router = useRouter();
-  const [jwtdata, setJwtdata] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false)
+  const [fetchLoading, setFetchLoading] = useState<boolean>(true)
+  const formRef = useRef<HTMLFormElement>(null)
+  const router = useRouter()
+  const [jwtdata, setJwtdata] = useState<string | null>(null)
 
-  const form = useForm<todoInput>({
-    resolver: zodResolver(todoSchema),
+  const form = useForm<todoTaskInput>({
+    resolver: zodResolver(todoTaskInputSchema),
     defaultValues: {
-      task: '',
+      task: "",
     },
-  });
+  })
 
   useEffect(() => {
     async function fetchJwtAndTodo() {
@@ -55,40 +60,40 @@ export function UpdateTodoForm({ id }: UpdateTodoFormProps) {
         await getSession({
           fetchOptions: {
             onSuccess: async (ctx) => {
-              const jwt = ctx.response.headers.get('set-auth-jwt');
-              console.log('jwt:', jwt);
-              setJwtdata(jwt);
+              const jwt = ctx.response.headers.get("set-auth-jwt")
+              console.log("jwt:", jwt)
+              setJwtdata(jwt)
 
               if (jwt) {
-                const todo = await fetchTodo(jwt, id);
+                const todo = await fetchTodo(jwt, id)
                 // update defaultValues with fetched todo
                 if (todo) {
-                  form.reset({ task: todo.task });
+                  form.reset({ task: todo.task })
                 }
-                setFetchLoading(false);
+                setFetchLoading(false)
               }
             },
           },
-        });
+        })
       } catch (error) {
-        console.log('error:', error);
-        setFetchLoading(false);
+        console.log("error:", error)
+        setFetchLoading(false)
       }
     }
 
-    fetchJwtAndTodo();
-  }, [id, form]);
+    fetchJwtAndTodo()
+  }, [id, form])
 
-  async function onSubmit(values: todoInput) {
-    setLoading(true);
+  async function onSubmit(values: todoTaskInput) {
+    setLoading(true)
     try {
-      const updateTask = await updateTodo(jwtdata ?? '', values.task, id);
-      console.log(updateTask);
-      router.push('/profile');
+      const updateTask = await updateTodo(jwtdata ?? "", values.task, id)
+      console.log(updateTask)
+      router.push("/profile")
     } catch (error) {
-      console.log('error:', error);
+      console.log("error:", error)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
   }
 
@@ -150,12 +155,12 @@ export function UpdateTodoForm({ id }: UpdateTodoFormProps) {
                   Updating...
                 </>
               ) : (
-                'Update Task'
+                "Update Task"
               )}
             </Button>
           </CardFooter>
         </form>
       </Form>
     </Card>
-  );
+  )
 }

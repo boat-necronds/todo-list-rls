@@ -1,7 +1,10 @@
-'use client';
+"use client"
 
-import { getSession, signOut } from '@/lib/auth-client';
-import React, { useEffect, useState } from 'react';
+import { getSession, signOut } from "@/lib/auth-client"
+import React, { useEffect, useState } from "react"
+import { neon } from "@neondatabase/serverless"
+import { drizzle } from "drizzle-orm/neon-http"
+import { todos } from "./schema"
 import {
   Table,
   TableBody,
@@ -9,20 +12,13 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@workspace/ui/components/table';
-import { Button } from '@workspace/ui/components/button';
-import Link from 'next/link';
-import { Loader2 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { deleteTodo } from '@/features/todo/actions/todo-action';
-
-export interface Todo {
-  id: string;
-  userId: string;
-  task: string;
-  insertedAt: string;
-  isComplete: boolean;
-}
+} from "@workspace/ui/components/table"
+import { Button } from "@workspace/ui/components/button"
+import Link from "next/link"
+import { Loader2 } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { deleteTodo } from "@/features/todo/actions/todo-action"
+import { todoInput } from "@/features/todo/schema"
 
 export default function Todolist() {
   const [jwtdata, setJwtdata] = useState<string | null>(null);
@@ -30,28 +26,30 @@ export default function Todolist() {
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
 
+
   useEffect(() => {
     async function fetchJwt() {
       try {
         await getSession({
           fetchOptions: {
             onSuccess: (ctx) => {
-              const jwt = ctx.response.headers.get('set-auth-jwt');
-              console.log('jwt:', jwt);
-              setJwtdata(jwt);
+              const jwt = ctx.response.headers.get("set-auth-jwt")
+              console.log("jwt:", jwt)
+              setJwtdata(jwt)
             },
           },
-        });
+        })
       } catch (error) {
-        console.log('error:', error);
+        console.log("error:", error)
       }
     }
 
-    fetchJwt();
-  }, []);
+    fetchJwt()
+  }, [])
 
   useEffect(() => {
-    if (!jwtdata) return;
+    if (!jwtdata) return
+
 
     async function fetchTodos() {
       if (!jwtdata) return;
@@ -67,40 +65,41 @@ export default function Todolist() {
     fetchTodos();
   }, [jwtdata]);
 
-  console.log(
-    'todosData task :',
-    todosData?.map((todo) => todo.task)
-  );
 
-  console.log(todosData?.map((todo) => todo.userId));
+  console.log(
+    "todosData task :",
+    todosData?.map((todo) => todo.task)
+  )
+
+  console.log(todosData?.map((todo) => todo.userId))
 
   async function deleteTask(id: string) {
-    setLoading(true);
+    setLoading(true)
     try {
-      const deleted = await deleteTodo(jwtdata ?? '', id);
-      console.log(deleted);
-      window.location.reload();
+      const deleted = await deleteTodo(jwtdata ?? "", id)
+      console.log(deleted)
+      window.location.reload()
     } catch (error) {
-      console.log('error:', error);
+      console.log("error:", error)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
   }
 
   async function handleLogout() {
-    setLoading(true);
+    setLoading(true)
     try {
       await signOut({
         fetchOptions: {
           onSuccess: () => {
-            router.push('/sign-in');
+            router.push("/sign-in")
           },
         },
-      });
+      })
     } catch (error) {
-      console.log('error:', error);
+      console.log("error:", error)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
   }
 
@@ -116,7 +115,7 @@ export default function Todolist() {
             {loading ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             ) : (
-              'Sign Out'
+              "Sign Out"
             )}
           </Button>
         </div>
@@ -134,7 +133,7 @@ export default function Todolist() {
         </TableHeader>
         <TableBody>
           {todosData && todosData.length > 0 ? (
-            todosData.map((todo: Todo) => (
+            todosData.map((todo) => (
               <TableRow key={todo.id.toString()}>
                 <TableCell>{todo.id}</TableCell>
                 <TableCell>{todo.userId}</TableCell>
@@ -143,7 +142,7 @@ export default function Todolist() {
                   {new Date(todo.insertedAt).toLocaleString()}
                 </TableCell>
                 <TableCell>
-                  {todo.isComplete ? '✅ Done' : '⏳ Pending'}
+                  {todo.isComplete ? "✅ Done" : "⏳ Pending"}
                 </TableCell>
                 <TableCell className="flex gap-4">
                   <Link href={`/profile/update/${todo.id}`}>
@@ -156,7 +155,7 @@ export default function Todolist() {
                     {loading ? (
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     ) : (
-                      'Delete'
+                      "Delete"
                     )}
                   </Button>
                 </TableCell>
@@ -172,5 +171,5 @@ export default function Todolist() {
         </TableBody>
       </Table>
     </div>
-  );
+  )
 }
