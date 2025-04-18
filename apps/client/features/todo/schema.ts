@@ -36,7 +36,11 @@ export const userSignInSchema = z.object({
 })
 
 export const todoSchema = z.object({
+  id: z.string().uuid(),
+  userId: z.string(),
   task: z.string().min(1, "Task is required"),
+  isComplete: z.boolean(),
+  insertedAt: z.date(),
 })
 
 export const signInSchema = z.object({
@@ -63,6 +67,10 @@ export const userProfileSchema = userSignUpSchema.pick({
   role: true,
 })
 
+export const todoTaskInputSchema = todoSchema.pick({
+  task: true,
+})
+
 export type FormState = z.infer<typeof FormStateSchema>
 export type UserInputSignUpForm = z.infer<typeof userSignUpSchema>
 export type UserInputSignInForm = z.infer<typeof userSignInSchema>
@@ -70,3 +78,4 @@ export type UserProfileForm = z.infer<typeof userProfileSchema>
 export type signInInput = z.infer<typeof signInSchema>
 
 export type todoInput = z.infer<typeof todoSchema>
+export type todoTaskInput = z.infer<typeof todoTaskInputSchema>

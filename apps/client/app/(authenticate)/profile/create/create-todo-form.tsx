@@ -26,7 +26,7 @@ import { Loader2 } from 'lucide-react';
 import { getSession } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
 
-import { todoInput, todoSchema } from '@/features/todo/schema';
+import { todoInput, todoSchema, todoTaskInput, todoTaskInputSchema } from '@/features/todo/schema';
 import { createTodo } from '@/features/todo/actions/todo-action';
 
 export function CreateTodoForm() {
@@ -55,14 +55,14 @@ export function CreateTodoForm() {
     fetchJwt();
   }, []);
 
-  const form = useForm<todoInput>({
-    resolver: zodResolver(todoSchema),
+  const form = useForm<todoTaskInput>({
+    resolver: zodResolver(todoTaskInputSchema),
     defaultValues: {
       task: '',
     },
   });
 
-  async function onSubmit(values: todoInput) {
+  async function onSubmit(values: todoTaskInput) {
     setLoading(true);
     try {
       const createTask = await createTodo(jwtdata ?? '', values.task);
