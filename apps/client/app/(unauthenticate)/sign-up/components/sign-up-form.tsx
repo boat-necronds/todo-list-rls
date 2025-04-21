@@ -187,6 +187,7 @@ export function SignUpForm() {
                         <SelectContent>
                           <SelectItem value="user">User</SelectItem>
                           <SelectItem value="admin">Admin</SelectItem>
+                          <SelectItem value="admin-post">Admin Post</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />

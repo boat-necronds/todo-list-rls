@@ -1,22 +1,23 @@
-import { headers } from 'next/headers';
-import { auth } from '@/lib/auth';
-import Todolist from './components/todolist';
+import { headers } from "next/headers"
+import { auth } from "@/lib/auth"
+import Todolist from "./components/todolist"
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from '@workspace/ui/components/card';
+} from "@workspace/ui/components/card"
+import Postslist from "./components/postlist"
 
 export default async function ProfilePage() {
   const session = await auth.api.getSession({
     headers: await headers(),
-  });
+  })
 
   if (!session) {
-    console.log('ไม่เจอ session');
+    console.log("ไม่เจอ session")
   }
-  console.log(session);
+  console.log(session)
 
   return (
     <div className="min-h-[100vh] flex justify-center items-center flex-col bg-black text-white space-y-10">
@@ -45,6 +46,7 @@ export default async function ProfilePage() {
       </Card>
 
       <Todolist />
+      <Postslist />
     </div>
-  );
+  )
 }

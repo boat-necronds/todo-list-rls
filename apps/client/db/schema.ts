@@ -9,7 +9,7 @@ import {
   bigint,
   boolean,
 } from "drizzle-orm/pg-core"
-import { authenticatedRole } from "drizzle-orm/neon"
+import { authenticatedRole, anonymousRole } from "drizzle-orm/neon"
 
 // This is a multi-tenant app.
 export const tenants = pgTable(
@@ -63,8 +63,54 @@ export const todos = pgTable(
   (table) => [
     crudPolicy({
       role: authenticatedRole,
-      read: sql`(select auth.user_id() = ${table.userId}::text)`,
-      modify: sql`(select auth.user_id() = ${table.userId}::text)`,
+      read: sql`
+          (
+            auth.user_id() = ${table.userId}::text
+            OR auth.session()->>'role' = 'admin'::text
+          )
+        `,
+      modify: sql`
+          (
+            auth.user_id() = ${table.userId}::text
+            OR auth.session()->>'role' = 'admin'::text
+          )
+        `,
+    }),
+  ]
+)
+
+export const posts = pgTable(
+  "posts",
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    userId: text()
+      .notNull()
+      .default(sql`(auth.user_id())`),
+    post: text().notNull(),
+    insertedAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    crudPolicy({
+      role: anonymousRole,
+      read: true,
+      modify: false,
+    }),
+    crudPolicy({
+      role: authenticatedRole,
+      read: sql`
+            (
+              auth.user_id() = ${table.userId}::text
+              OR auth.session()->>'role' = 'admin'::text
+              OR auth.session()->>'role' = 'admin-post'::text
+            )
+          `,
+      modify: sql`
+            (
+              auth.user_id() = ${table.userId}::text
+              OR auth.session()->>'role' = 'admin'::text
+              OR auth.session()->>'role' = 'admin-post'::text
+            )
+          `,
     }),
   ]
 )
