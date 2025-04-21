@@ -20,10 +20,10 @@ function getRoleFromJwt(token: string): string | null {
 
 export const getDb = (jwt?: string) => {
   let databaseUrl: string
-
+  console.log("jwt : ", jwt)
   try {
     if (!jwt) {
-      console.log("anonymous", process.env.DATABASE_UNAUTHENTICATED_URL)
+      console.log("anonymous : ", process.env.DATABASE_UNAUTHENTICATED_URL)
       if (!process.env.DATABASE_UNAUTHENTICATED_URL) {
         throw new Error("DATABASE_AUTHENTICATED_URL is not defined")
       }
@@ -52,7 +52,7 @@ export const getDb = (jwt?: string) => {
     }
   } catch (error) {
     console.error("Error processing database connection:", error)
-
+    console.log("AUTHENTICATED : ", process.env.DATABASE_UNAUTHENTICATED_URL)
     if (!process.env.DATABASE_AUTHENTICATED_URL) {
       throw new Error("DATABASE_AUTHENTICATED_URL is not defined")
     }

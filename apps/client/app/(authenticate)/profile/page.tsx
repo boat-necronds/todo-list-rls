@@ -60,13 +60,17 @@ export default async function ProfilePage() {
 
         {/* Todo List */}
         <div className="bg-white shadow-xl rounded-lg p-6">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">📝 Todo List</h2>
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">
+            📝 Todo List
+          </h2>
           <Todolist />
         </div>
 
         {/* Posts List */}
         <div className="bg-white shadow-xl rounded-lg p-6">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">📬 Posts List</h2>
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">
+            📬 Posts List
+          </h2>
           <Postslist />
         </div>
       </div>

@@ -14,7 +14,7 @@ import { Button } from "@workspace/ui/components/button"
 import Link from "next/link"
 import { postInput } from "@/features/posts/schema"
 
-export default function Postslist() {
+export default function NoneAuthPostslist() {
   const [jwtdata, setJwtdata] = useState<string | null>(null)
   const [postsData, setPostsData] = useState<Array<postInput> | null>(null)
 
@@ -40,12 +40,7 @@ export default function Postslist() {
 
   useEffect(() => {
     async function fetchPosts() {
-      if (!jwtdata) return
-      const response = await fetch("/api/posts", {
-        headers: {
-          "auth-jwt": jwtdata,
-        },
-      })
+      const response = await fetch("/api/no-auth-posts")
       const postList = (await response.json()) as Array<postInput>
       setPostsData(postList)
     }
