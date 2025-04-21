@@ -82,22 +82,23 @@ export function SignUpForm() {
   }
 
   return (
-    <Card className="min-w-[350px]">
-      <Form {...form}>
-        <form
-          ref={formRef}
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-4"
-        >
-          <CardHeader>
-            <CardTitle>Sign Up</CardTitle>
-            <CardDescription>
-              Deploy your new project in one-click.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid w-full items-center gap-4">
-              <div className="flex flex-col space-y-1.5">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-500 to-purple-600 w-full">
+      <Card className="w-full max-w-md bg-white shadow-lg rounded-lg overflow-hidden">
+        <CardHeader className="p-6 bg-gradient-to-r from-purple-600 to-blue-500 text-white">
+          <CardTitle className="text-2xl font-bold">Sign Up</CardTitle>
+          <CardDescription className="text-sm text-white">
+            Create your account and start managing your projects.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="p-6 space-y-4">
+          <Form {...form}>
+            <form
+              ref={formRef}
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-4"
+            >
+              <div className="grid w-full items-center gap-4">
+                {/* Email Field */}
                 <FormField
                   control={form.control}
                   name="email"
@@ -106,8 +107,8 @@ export function SignUpForm() {
                       <FormLabel>Email</FormLabel>
                       <FormControl>
                         <Input
-                          type="text"
-                          placeholder="email"
+                          type="email"
+                          placeholder="Enter your email"
                           aria-label="Email"
                           {...field}
                         />
@@ -116,8 +117,7 @@ export function SignUpForm() {
                     </FormItem>
                   )}
                 />
-              </div>
-              <div className="flex flex-col space-y-1.5">
+                {/* Password Field */}
                 <FormField
                   control={form.control}
                   name="password"
@@ -126,24 +126,17 @@ export function SignUpForm() {
                       <FormLabel>Password</FormLabel>
                       <FormControl>
                         <InputPassword
-                          placeholder="Password"
+                          placeholder="Enter your password"
                           aria-label="Password"
                           {...field}
                           showStrength={false}
                         />
                       </FormControl>
                       <FormMessage />
-                      {form.formState.errors.root && (
-                        <p className="text-red-500 text-sm">
-                          {form.formState.errors.root.message}
-                        </p>
-                      )}
                     </FormItem>
                   )}
                 />
-              </div>
-
-              <div className="flex flex-col space-y-1.5">
+                {/* Name Field */}
                 <FormField
                   control={form.control}
                   name="name"
@@ -152,23 +145,16 @@ export function SignUpForm() {
                       <FormLabel>Name</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="name"
+                          placeholder="Enter your name"
                           aria-label="Name"
                           {...field}
                         />
                       </FormControl>
                       <FormMessage />
-                      {form.formState.errors.root && (
-                        <p className="text-red-500 text-sm">
-                          {form.formState.errors.root.message}
-                        </p>
-                      )}
                     </FormItem>
                   )}
                 />
-              </div>
-
-              <div className="flex flex-col space-y-1.5">
+                {/* Role Field */}
                 <FormField
                   control={form.control}
                   name="role"
@@ -195,24 +181,27 @@ export function SignUpForm() {
                   )}
                 />
               </div>
-            </div>
-          </CardContent>
-          <CardFooter className="flex justify-between">
-            <Link href="/sign-in">
-              <Button variant="ghost">Go to Sign In</Button>
-            </Link>
-            <Button type="submit">
-              {loading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                </>
-              ) : (
-                "Sign Up"
-              )}
-            </Button>
-          </CardFooter>
-        </form>
-      </Form>
-    </Card>
+              <CardFooter className="flex justify-between items-center">
+                <Link href="/sign-in">
+                  <Button variant="ghost" className="text-purple-600">
+                    Go to Sign In
+                  </Button>
+                </Link>
+                <Button
+                  type="submit"
+                  className="bg-purple-600 text-white hover:bg-purple-700"
+                >
+                  {loading ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    "Sign Up"
+                  )}
+                </Button>
+              </CardFooter>
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
+    </div>
   )
 }

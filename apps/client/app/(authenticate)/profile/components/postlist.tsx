@@ -1,6 +1,6 @@
 "use client"
 
-import { getSession, signOut } from "@/lib/auth-client"
+import { getSession } from "@/lib/auth-client"
 import React, { useEffect, useState } from "react"
 import {
   Table,
@@ -12,16 +12,11 @@ import {
 } from "@workspace/ui/components/table"
 import { Button } from "@workspace/ui/components/button"
 import Link from "next/link"
-import { Loader2 } from "lucide-react"
-import { useRouter } from "next/navigation"
-import { deleteTodo } from "@/features/todo/actions/todo-action"
 import { postInput } from "@/features/posts/schema"
 
 export default function Postslist() {
   const [jwtdata, setJwtdata] = useState<string | null>(null)
   const [postsData, setPostsData] = useState<Array<postInput> | null>(null)
-  const [loading, setLoading] = useState<boolean>(false)
-  const router = useRouter()
 
   useEffect(() => {
     async function fetchJwt() {
@@ -44,15 +39,8 @@ export default function Postslist() {
   }, [])
 
   useEffect(() => {
-    if (!jwtdata) return
-
     async function fetchPosts() {
-      if (!jwtdata) return
-      const response = await fetch("/api/posts", {
-        headers: {
-          "auth-jwt": jwtdata,
-        },
-      })
+      const response = await fetch("/api/no-auth-posts")
       const postList = (await response.json()) as Array<postInput>
       setPostsData(postList)
     }
@@ -60,89 +48,70 @@ export default function Postslist() {
     fetchPosts()
   }, [jwtdata])
 
-  console.log("Posts : ", postsData)
-
-  async function deleteTask(id: string) {
-    setLoading(true)
-    try {
-      const deleted = await deleteTodo(jwtdata ?? "", id)
-      console.log(deleted)
-      window.location.reload()
-    } catch (error) {
-      console.log("error:", error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  async function handleLogout() {
-    setLoading(true)
-    try {
-      await signOut({
-        fetchOptions: {
-          onSuccess: () => {
-            router.push("/sign-in")
-          },
-        },
-      })
-    } catch (error) {
-      console.log("error:", error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
   return (
-    <div>
-      <div className="flex w-full items-center justify-between">
-        <h1 className="text-3xl font-bold">Posts List</h1>
-      </div>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Post ID</TableHead>
-            <TableHead>User ID</TableHead>
-            <TableHead>Post</TableHead>
-            <TableHead>Date</TableHead>
-            {/*  <TableHead>Action</TableHead> */}
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {postsData && postsData.length > 0 ? (
-            postsData.map((post) => (
-              <TableRow key={post.id.toString()}>
-                <TableCell>{post.id}</TableCell>
-                <TableCell>{post.userId}</TableCell>
-                <TableCell>{post.post} </TableCell>
-                <TableCell>
-                  {new Date(post.insertedAt).toLocaleString()}
-                </TableCell>
-                {/* <TableCell className="flex gap-4">
-                  <Link href={`/profile/update/${post.id}`}>
-                    <Button>Edit</Button>
-                  </Link>
-                  <Button
-                    onClick={() => deleteTask(post.id)}
-                    variant="destructive"
-                  >
-                    {loading ? (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    ) : (
-                      "Delete"
-                    )}
-                  </Button>
-                </TableCell> */}
-              </TableRow>
-            ))
-          ) : (
+    <div className="flex justify-center items-center">
+      <div className="w-full max-w-4xl bg-white shadow-xl rounded-lg overflow-hidden">
+        {/* Header */}
+        <div className="flex w-full items-center justify-between px-6 py-4 bg-gradient-to-r from-purple-600 to-blue-500 text-white">
+          <h1 className="text-2xl font-bold">📬 Posts List</h1>
+          {/* <Link href="/profile/create-post">
+            <Button className="bg-white text-purple-600 hover:bg-gray-200">
+              Create Post
+            </Button>
+          </Link> */}
+        </div>
+
+        {/* Table */}
+        <Table className="w-full border-collapse">
+          <TableHeader className="bg-gray-800">
             <TableRow>
-              <TableCell colSpan={7} className="text-center py-4">
-                No post ...
-              </TableCell>
+              <TableHead className="px-4 py-2 text-left  text-white">
+                Post ID
+              </TableHead>
+              <TableHead className="px-4 py-2 text-left  text-white">
+                User ID
+              </TableHead>
+              <TableHead className="px-4 py-2 text-left  text-white">
+                Post
+              </TableHead>
+              <TableHead className="px-4 py-2 text-left  text-white">
+                Date
+              </TableHead>
             </TableRow>
-          )}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {postsData && postsData.length > 0 ? (
+              postsData.map((post, index) => (
+                <TableRow
+                  key={post.id.toString()}
+                  className={`${
+                    index % 2 === 0 ? "bg-gray-100" : "bg-white"
+                  } hover:bg-gray-200 transition-colors`}
+                >
+                  <TableCell className="px-4 py-2 border-b">
+                    {post.id}
+                  </TableCell>
+                  <TableCell className="px-4 py-2 border-b">
+                    {post.userId}
+                  </TableCell>
+                  <TableCell className="px-4 py-2 border-b">
+                    {post.post}
+                  </TableCell>
+                  <TableCell className="px-4 py-2 border-b">
+                    {new Date(post.insertedAt).toLocaleString()}
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={4} className="text-center py-4">
+                  No posts available...
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   )
 }

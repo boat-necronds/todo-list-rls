@@ -27,13 +27,7 @@ import { Loader2 } from "lucide-react"
 import { getSession } from "@/lib/auth-client"
 import { useRouter } from "next/navigation"
 
-import {
-  todoInput,
-  todoSchema,
-  todoTaskInput,
-  todoTaskInputSchema,
-} from "@/features/todo/schema"
-import { Label } from "@workspace/ui/components/label"
+import { todoTaskInput, todoTaskInputSchema } from "@/features/todo/schema"
 import { fetchTodo, updateTodo } from "@/features/todo/actions/todo-action"
 
 interface UpdateTodoFormProps {
@@ -66,7 +60,6 @@ export function UpdateTodoForm({ id }: UpdateTodoFormProps) {
 
               if (jwt) {
                 const todo = await fetchTodo(jwt, id)
-                // update defaultValues with fetched todo
                 if (todo) {
                   form.reset({ task: todo.task })
                 }
@@ -98,26 +91,28 @@ export function UpdateTodoForm({ id }: UpdateTodoFormProps) {
   }
 
   return (
-    <Card className="min-w-[350px]">
-      <Form {...form}>
-        <form
-          ref={formRef}
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-4"
-        >
-          <CardHeader>
-            <CardTitle>Edit Task</CardTitle>
-            <CardDescription>Edit your task here.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {fetchLoading ? (
-              <div className="flex flex-col justify-center space-y-3">
-                <Label>Task</Label>
-                <Skeleton className="h-8 w-full" />
-              </div>
-            ) : (
-              <div className="grid w-full items-center gap-4">
-                <div className="flex flex-col space-y-1.5">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-500 to-purple-600 w-full">
+      <Card className="w-full max-w-md bg-white shadow-lg rounded-lg overflow-hidden">
+        <Form {...form}>
+          <form
+            ref={formRef}
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-4"
+          >
+            <CardHeader className="p-6 bg-gradient-to-r from-purple-600 to-blue-500 text-white">
+              <CardTitle className="text-2xl font-bold">Edit Task</CardTitle>
+              <CardDescription className="text-sm text-white">
+                Update your task details below.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-6 space-y-4">
+              {fetchLoading ? (
+                <div className="flex flex-col justify-center space-y-3">
+                  <FormLabel>Task</FormLabel>
+                  <Skeleton className="h-10 w-full" />
+                </div>
+              ) : (
+                <div className="grid w-full items-center gap-4">
                   <FormField
                     control={form.control}
                     name="task"
@@ -126,41 +121,42 @@ export function UpdateTodoForm({ id }: UpdateTodoFormProps) {
                         <FormLabel>Task</FormLabel>
                         <FormControl>
                           <Input
-                            placeholder="Task"
-                            aria-label="task"
+                            placeholder="Enter your task"
+                            aria-label="Task"
                             {...field}
                           />
                         </FormControl>
                         <FormMessage />
-                        {form.formState.errors.root && (
-                          <p className="text-red-500 text-sm">
-                            {form.formState.errors.root.message}
-                          </p>
-                        )}
                       </FormItem>
                     )}
                   />
                 </div>
-              </div>
-            )}
-          </CardContent>
-          <CardFooter className="flex justify-between">
-            <Link href="/profile">
-              <Button variant="ghost">Back</Button>
-            </Link>
-            <Button type="submit" disabled={fetchLoading || loading}>
-              {loading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Updating...
-                </>
-              ) : (
-                "Update Task"
               )}
-            </Button>
-          </CardFooter>
-        </form>
-      </Form>
-    </Card>
+            </CardContent>
+            <CardFooter className="p-6 flex justify-between items-center">
+              <Link href="/profile">
+                <Button variant="ghost" className="text-purple-600">
+                  Back
+                </Button>
+              </Link>
+              <Button
+                type="submit"
+                disabled={fetchLoading || loading}
+                className="bg-purple-600 text-white hover:bg-purple-700"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Updating...
+                  </>
+                ) : (
+                  "Update Task"
+                )}
+              </Button>
+            </CardFooter>
+          </form>
+        </Form>
+      </Card>
+    </div>
   )
 }

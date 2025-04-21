@@ -23,28 +23,28 @@ export const getDb = (jwt?: string) => {
 
   try {
     if (!jwt) {
-      console.log("No JWT provided, using authenticated URL without token")
-      if (!process.env.DATABASE_ANONYMOUS_URL) {
+      console.log("anonymous", process.env.DATABASE_UNAUTHENTICATED_URL)
+      if (!process.env.DATABASE_UNAUTHENTICATED_URL) {
         throw new Error("DATABASE_AUTHENTICATED_URL is not defined")
       }
-      databaseUrl = process.env.DATABASE_ANONYMOUS_URL
+      databaseUrl = process.env.DATABASE_UNAUTHENTICATED_URL
       return neon(databaseUrl)
     }
 
     const role = getRoleFromJwt(jwt)
 
     if (role === "superadmin") {
-      console.log("Owner", process.env.DATABASE_URL)
       if (!process.env.DATABASE_URL) {
         throw new Error("DATABASE_URL is not defined")
       }
+
       databaseUrl = process.env.DATABASE_URL
       return neon(databaseUrl)
     } else {
-      console.log("Authenticate", process.env.DATABASE_AUTHENTICATED_URL)
       if (!process.env.DATABASE_AUTHENTICATED_URL) {
         throw new Error("DATABASE_AUTHENTICATED_URL is not defined")
       }
+
       databaseUrl = process.env.DATABASE_AUTHENTICATED_URL
       return neon(databaseUrl, {
         authToken: jwt,

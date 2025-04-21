@@ -13,12 +13,7 @@ import {
 } from "@workspace/ui/components/card"
 import { InputPassword } from "@workspace/ui/components/input-password"
 import { Input } from "@workspace/ui/components/input"
-import {
-  signInInput,
-  signInSchema,
-  UserInputSignInForm,
-  userSignInInputSchema,
-} from "@/features/auth/schema"
+import { signInInput, signInSchema } from "@/features/auth/schema"
 import { zodResolver } from "@hookform/resolvers/zod"
 import {
   Form,
@@ -30,9 +25,8 @@ import {
 } from "@workspace/ui/components/form"
 import Link from "next/link"
 import { Loader2 } from "lucide-react"
-import { signIn, signUp } from "@/lib/auth-client"
+import { signIn } from "@/lib/auth-client"
 import { useRouter } from "next/navigation"
-import { updateRole } from "@/features/auth/action"
 
 export function SignInForm() {
   const [loading, setLoading] = useState<boolean>(false)
@@ -63,22 +57,23 @@ export function SignInForm() {
   }
 
   return (
-    <Card className="min-w-[350px]">
-      <Form {...form}>
-        <form
-          ref={formRef}
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-4"
-        >
-          <CardHeader>
-            <CardTitle>Sign In</CardTitle>
-            <CardDescription>
-              Deploy your new project in one-click.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid w-full items-center gap-4">
-              <div className="flex flex-col space-y-1.5">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-500 to-purple-600 p-6 w-full">
+      <Card className="w-full max-w-md bg-white shadow-lg rounded-lg overflow-hidden">
+        <CardHeader className="p-6 bg-gradient-to-r from-purple-600 to-blue-500 text-white">
+          <CardTitle className="text-2xl font-bold">Sign In</CardTitle>
+          <CardDescription className="text-sm text-white">
+            Access your account and manage your projects.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="p-6 space-y-4">
+          <Form {...form}>
+            <form
+              ref={formRef}
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-4"
+            >
+              <div className="grid w-full items-center gap-4">
+                {/* Email Field */}
                 <FormField
                   control={form.control}
                   name="email"
@@ -87,8 +82,8 @@ export function SignInForm() {
                       <FormLabel>Email</FormLabel>
                       <FormControl>
                         <Input
-                          type="text"
-                          placeholder="email"
+                          type="email"
+                          placeholder="Enter your email"
                           aria-label="Email"
                           {...field}
                         />
@@ -97,8 +92,7 @@ export function SignInForm() {
                     </FormItem>
                   )}
                 />
-              </div>
-              <div className="flex flex-col space-y-1.5">
+                {/* Password Field */}
                 <FormField
                   control={form.control}
                   name="password"
@@ -107,40 +101,38 @@ export function SignInForm() {
                       <FormLabel>Password</FormLabel>
                       <FormControl>
                         <InputPassword
-                          placeholder="Password"
+                          placeholder="Enter your password"
                           aria-label="Password"
                           {...field}
                           showStrength={false}
                         />
                       </FormControl>
                       <FormMessage />
-                      {form.formState.errors.root && (
-                        <p className="text-red-500 text-sm">
-                          {form.formState.errors.root.message}
-                        </p>
-                      )}
                     </FormItem>
                   )}
                 />
               </div>
-            </div>
-          </CardContent>
-          <CardFooter className="flex justify-between">
-            <Link href="/sign-up">
-              <Button variant="ghost">Go to Sign Up</Button>
-            </Link>
-            <Button type="submit">
-              {loading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                </>
-              ) : (
-                "Sign In"
-              )}
-            </Button>
-          </CardFooter>
-        </form>
-      </Form>
-    </Card>
+              <CardFooter className="flex justify-between items-center">
+                <Link href="/sign-up">
+                  <Button variant="ghost" className="text-purple-600">
+                    Go to Sign Up
+                  </Button>
+                </Link>
+                <Button
+                  type="submit"
+                  className="bg-purple-600 text-white hover:bg-purple-700"
+                >
+                  {loading ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    "Sign In"
+                  )}
+                </Button>
+              </CardFooter>
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
+    </div>
   )
 }
