@@ -25,7 +25,7 @@ export const getDb = (jwt?: string) => {
     if (!jwt) {
       console.log("anonymous : ", process.env.DATABASE_UNAUTHENTICATED_URL)
       if (!process.env.DATABASE_UNAUTHENTICATED_URL) {
-        throw new Error("DATABASE_AUTHENTICATED_URL is not defined")
+        throw new Error("DATABASE_AUTHENTICATED_URL is not defined 5555")
       }
       databaseUrl = process.env.DATABASE_UNAUTHENTICATED_URL
       return neon(databaseUrl)
